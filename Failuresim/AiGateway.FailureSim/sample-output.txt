@@ -1,0 +1,55 @@
+AI Gateway — Failure Simulation
+================================
+Provider A backs 'standard' and 'economy'. Provider B backs 'premium'. Local backs 'local'.
+
+Phase 1 — one failure type per request, each against a freshly-healthy Provider B
+---------------------------------------------------------------------------------
+Request 1: Baseline: Provider B healthy
+  -> SUCCESS  model=premium  provider=ProviderB fallbackUsed=False retryCount=0
+
+Request 2: Provider B returns 503 three times (retries exhausted) -> fallback to Standard
+  -> SUCCESS  model=standard provider=ProviderA fallbackUsed=True  retryCount=2
+
+Request 3: Provider B returns 429 once -> bounded retry succeeds on the SAME model
+  -> SUCCESS  model=premium  provider=ProviderB fallbackUsed=False retryCount=1
+
+Request 4: Provider B times out three times -> fallback to Standard
+  -> SUCCESS  model=standard provider=ProviderA fallbackUsed=True  retryCount=2
+
+Request 5: Provider B returns a malformed response -> no retry, but DOES fall back (provider-specific glitch)
+  -> SUCCESS  model=standard provider=ProviderA fallbackUsed=True  retryCount=0
+
+Request 6: Provider B rejects the request outright (400) -> no retry, NO fallback (same request fails everywhere)
+  -> FAILED   attempts=1 — Request failed on 'premium' with a non-recoverable error (InvalidRequest): Provider 'ProviderB' rejected the request as malformed (400).
+
+
+Phase 2 — one continuous gateway instance: watch Provider B's health degrade and recover
+-------------------------------------------------------------------------------------------
+Request 7: Request A: Provider B healthy
+  -> SUCCESS  model=premium  provider=ProviderB fallbackUsed=False retryCount=0
+
+Request 8: Request B: Provider B fails (1st consecutive failure) -> falls back to Standard
+  -> SUCCESS  model=standard provider=ProviderA fallbackUsed=True  retryCount=2
+
+Request 9: Request C: Provider B fails again (2nd consecutive failure) -> falls back to Standard
+  -> SUCCESS  model=standard provider=ProviderA fallbackUsed=True  retryCount=2
+
+Request 10: Request D: Provider B fails a 3rd consecutive time -> crosses the Unavailable threshold
+  -> SUCCESS  model=standard provider=ProviderA fallbackUsed=True  retryCount=2
+
+  [After Request D] ProviderB status=Unavailable window=4 failures=3 consecutiveFailures=3
+
+Request 11: Request E: Provider B is Unavailable -> router skips it, routes straight to Standard (no wasted call)
+  -> SUCCESS  model=standard provider=ProviderA fallbackUsed=True  retryCount=0
+
+Request 12: Request F: same again -> still skipped, even though a success was scripted and never consumed
+  -> SUCCESS  model=standard provider=ProviderA fallbackUsed=True  retryCount=0
+
+  [After Request F (Provider B still Unavailable — no successes have been recorded since the failures)] ProviderB status=Unavailable window=4 failures=3 consecutiveFailures=3
+
+
+Note: this gateway only records Provider B health when it actually CALLS Provider B. Once
+marked Unavailable, the router stops calling it — so recovery in this design needs a
+separate out-of-band health probe, not just "try it again on the next real request".
+That's a deliberate scope boundary of this sample; see the article's production-considerations
+section for what a background health-probe loop would add.
