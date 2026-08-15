@@ -1,0 +1,6 @@
+@AiGateway.Api_HostAddress = http://localhost:5017
+
+GET {{AiGateway.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

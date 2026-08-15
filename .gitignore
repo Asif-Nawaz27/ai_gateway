@@ -1,0 +1,17 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+
+# IDE
+.vs/
+.vscode/
+.idea/
+
+# User secrets are stored outside the repo by design (see README), nothing to ignore here.
+
+# Logs / local artifacts
+*.log
+/ARTICLE.md
+/docker-compose.yml
