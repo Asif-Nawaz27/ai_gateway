@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/API/">
+    <Project Path="API/AiGateway.Api/AiGateway.Api.csproj" />
+  </Folder>
+  <Folder Name="/Benchmark/">
+    <Project Path="Benchmark/AiGateway.Benchmark/AiGateway.Benchmark.csproj" />
+  </Folder>
+  <Folder Name="/Failuresim/">
+    <Project Path="Failuresim/AiGateway.FailureSim/AiGateway.FailureSim.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/AiGateway.Tests/AiGateway.Tests.csproj" />
+  </Folder>
+</Solution>
