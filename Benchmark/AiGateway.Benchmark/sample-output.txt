@@ -1,0 +1,36 @@
+AI Gateway — Benchmark: Direct-to-Premium vs Gateway Routing
+==============================================================
+Requests: 300   Concurrency: 10   Streaming: no   Environment: .NET 10.0.9, 8 logical CPUs, OS Microsoft Windows NT 10.0.26200.0
+Provider latency is SIMULATED (FakeAiProvider), not a real network call. See source comments for full scope.
+
+--- Direct-to-Premium ---
+  Requests:        300
+  Success rate:    91.3% (274/300)
+  Wall clock:      33.64s (8.9 req/s)
+  Avg latency:     1104 ms
+  p95 latency:     1284 ms
+  Fallback used:   0 (0.0% of successes)
+  Total retries:   0
+  Total tokens:    8,768
+  Estimated cost:  $0.5261
+  Requests/model:  premium=274
+
+--- Gateway (routed) ---
+  Requests:        300
+  Success rate:    100.0% (300/300)
+  Wall clock:      12.71s (23.6 req/s)
+  Avg latency:     394 ms
+  p95 latency:     1109 ms
+  Fallback used:   0 (0.0% of successes)
+  Total retries:   11
+  Total tokens:    10,500
+  Estimated cost:  $0.0820
+  Requests/model:  economy=189, standard=82, premium=29
+
+--- Comparison ---
+Metric                       Direct        Gateway
+Success rate                  91.3%         100.0%
+Avg latency (ms)               1104            394
+p95 latency (ms)               1284           1109
+Total cost ($)               0.5261         0.0820
+Total tokens                  8,768         10,500
