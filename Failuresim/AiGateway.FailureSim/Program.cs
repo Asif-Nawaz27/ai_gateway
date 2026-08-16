@@ -87,7 +87,25 @@ Console.WriteLine("separate out-of-band health probe, not just \"try it again on
 Console.WriteLine("That's a deliberate scope boundary of this sample; see the article's production-considerations");
 Console.WriteLine("section for what a background health-probe loop would add.");
 
+PauseIfInteractive();
+
 return;
+
+// Keeps the window open when launched from an IDE (Visual Studio closes a console app's window
+// the instant the process exits, with no pause, unlike a plain `dotnet run` in a terminal). Skips
+// the pause entirely when there's no real console to wait on — piped/redirected output, CI, or
+// `dotnet run` from a script — so this never hangs an automated invocation.
+static void PauseIfInteractive()
+{
+    if (Console.IsInputRedirected || Console.IsOutputRedirected)
+    {
+        return;
+    }
+
+    Console.WriteLine();
+    Console.WriteLine("Press any key to exit...");
+    Console.ReadKey(intercept: true);
+}
 
 (AiGatewayService Gateway, FakeProviderScript ScriptA, FakeProviderScript ScriptB, FakeProviderScript ScriptLocal, IProviderHealthService Health) BuildGateway(double unavailableThreshold = 0.5)
 {
