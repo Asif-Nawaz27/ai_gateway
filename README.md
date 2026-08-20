@@ -35,7 +35,7 @@ AiGateway/
 
 ## Configuration
 
-Routing policy, model tiers, and tenants are all in `appsettings.json` / `appsettings.Development.json`
+Routing policy, model tiers, and tenants are all in `appsettings.json`
 under the `AiGateway` section — nothing is hard-coded. Model pricing (`InputCostPerMillionTokens`,
 `OutputCostPerMillionTokens`) in this repository is **illustrative demo data, not live provider
 pricing** — replace it with real figures from your provider's current pricing page before using
