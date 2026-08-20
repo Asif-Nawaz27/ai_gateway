@@ -41,7 +41,7 @@ under the `AiGateway` section — nothing is hard-coded. Model pricing (`InputCo
 pricing** — replace it with real figures from your provider's current pricing page before using
 cost figures for anything real.
 
-Three demo tenants ship in `appsettings.Development.json`, modeling the scenario the article walks
+Three demo tenants ship in `appsettings.json`, modeling the scenario the article walks
 through:
 
 | Tenant | Profile | Daily token budget | Requests/min | Concurrent AI calls | Allowed models |
